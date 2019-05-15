@@ -29,6 +29,7 @@ pipeline {
             steps {
 	        sh 'mvn versions:set -DnewVersion=$IMAGE_TAG'
                 sh 'mvn -B -DskipTests clean package'
+		sh 'mvn versions:commit'
                 sh 'docker build --build-arg JAR_FILE=target/$APP_NAME-$IMAGE_TAG.jar -t $DOCKER_REPO$APP_NAME:$IMAGE_TAG .'
             }
         }
