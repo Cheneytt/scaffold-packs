@@ -1,46 +1,22 @@
 pipeline {
     environment {
         APP_NAME = 'REPLACE_ME_APP_NAME'
-        VERSION = '1.0.0'
 	DOCKER_REPO='REPLACE_ME_IMAGE_REPO'
-	IMAGE_TAG='jenkins-test'
     }
     agent any
     stages {
         stage("Check Env") {
-            when {
-                not {
-                    anyOf{
-                        allOf {
-                            environment name: 'DEPLOY_ENV', value: 'dev'
-                            anyOf{
-                                expression { BRANCH_NAME ==~ /^dev.*/ }
-                                expression { BRANCH_NAME ==~ /^feature.*/ }
-                                expression { BRANCH_NAME ==~ /^bugfix.*/ }
-
-                            }
-                        }
-                        allOf {
-                            environment name: 'DEPLOY_ENV', value: 'test'
-                            expression { BRANCH_NAME ==~ /^test.*/ }
-                        }
-                        allOf {
-                            environment name: 'DEPLOY_ENV', value: 'preview'
-                            expression { BRANCH_NAME ==~ /^preview.*/ }
-                        }
-                        allOf {
-                            environment name: 'DEPLOY_ENV', value: 'production'
-                            anyOf{
-                                expression { BRANCH_NAME == 'master' }
-                                expression { BRANCH_NAME =~ /^release.*/ }
-                            }
-                        }
-                    }
-                }
-            }
             steps {
-                sh 'echo "env not matching"'
-                sh 'exit 1'
+		script {
+                    global.checkEnv()
+                }
+	    }
+        }
+	stage("Gen Image Tag") {
+            steps {
+                script {
+                    global.genImageTag()
+                }
             }
         }
         stage('Build') {
@@ -55,8 +31,8 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-	            sh 'helm lint charts/$APP_NAME'
-                sh 'helm upgrade --debug --force --install --recreate-pods $APP_NAME charts/$APP_NAME'
+	        sh 'helm lint charts/$APP_NAME'
+                sh 'helm upgrade --debug --install --set-string image.tag=$IMAGE_TAG,image.repository=$DOCKER_REPO$APP_NAME $APP_NAME charts/$APP_NAME'
             }
         }
     }

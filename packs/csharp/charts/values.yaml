@@ -4,7 +4,7 @@
 replicaCount: 1
 namespace: default
 image:
-  repository: REPLACE_ME_IMAGE_REPOREPLACE_ME_APP_NAME
+  repository: REPLACE_ME_APP_NAME
   tag: dev
   pullPolicy: Always
   pullSecrets:
