@@ -11,7 +11,6 @@ spec:
   template:
     metadata:
       labels:
-        draft: {{ default "draft-app" .Values.draft }}
         app: {{ template "fullname" . }}
 {{- if .Values.podAnnotations }}
       annotations:
@@ -20,7 +19,7 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.image.repository }}{{ .Values.image.name }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
 {{- with .Values.extraEnv }}
@@ -29,6 +28,10 @@ spec:
         volumeMounts:
 {{- with .Values.extraVolumeMounts }}
 {{ tpl . $ | indent 8 }}
+{{- end }}
+        args:
+{{- range .Values.extraArgs }}
+        - {{ . }}
 {{- end }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}

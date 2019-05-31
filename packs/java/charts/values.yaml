@@ -4,7 +4,8 @@
 replicaCount: 1
 namespace: default
 image:
-  repository: REPLACE_ME_APP_NAME
+  repository: 'REPLACE_ME_IMAGE_REPO'
+  name: REPLACE_ME_APP_NAME
   tag: latest
   pullPolicy: Always
   pullSecrets:
@@ -35,3 +36,4 @@ readinessProbe:
   successThreshold: 1
   timeoutSeconds: 1
 terminationGracePeriodSeconds: 10
+extraArgs: []

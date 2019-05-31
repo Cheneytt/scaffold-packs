@@ -41,7 +41,7 @@ pipeline {
         stage('Deploy') {
             steps {
 	        sh 'helm lint charts/$APP_NAME'
-                sh 'helm upgrade --debug --install --set-string image.tag=$IMAGE_TAG,image.repository=$DOCKER_REPO$APP_NAME $APP_NAME charts/$APP_NAME'
+                sh 'helm upgrade --debug --install --set-string image.tag=$IMAGE_TAG,image.repository=$DOCKER_REPO,image.name=$APP_NAME $APP_NAME charts/$APP_NAME'
             }
         }
     }
