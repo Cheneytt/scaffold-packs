@@ -19,6 +19,30 @@ pipeline {
                 }
             }
         }
+	stage('Test') {
+            agent {
+                docker {
+                    image 'maven:3.6.0-jdk-8-slim'
+                    args '-v $HOME/.m2:/root/.m2'
+                }
+            }
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh 'mvn versions:set -DnewVersion=$IMAGE_TAG'
+                    sh 'mvn versions:commit'
+                    sh 'mvn -B clean test'
+                    sh 'mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true'
+                    sh 'mvn -B sonar:sonar'
+                }
+            }
+        }
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
         stage('Build') {
             agent {
                 docker {
@@ -28,8 +52,8 @@ pipeline {
             }
             steps {
 	        sh 'mvn versions:set -DnewVersion=$IMAGE_TAG'
-                sh 'mvn -B clean package'
 		sh 'mvn versions:commit'
+                sh 'mvn -B -DskipTests clean package'
                 sh 'docker build --build-arg JAR_FILE=target/$APP_NAME-$IMAGE_TAG.jar -t $DOCKER_REPO$APP_NAME:$IMAGE_TAG .'
             }
         }
