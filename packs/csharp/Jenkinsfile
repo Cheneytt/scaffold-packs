@@ -19,6 +19,33 @@ pipeline {
                 }
             }
         }
+	stage('Test'){
+            agent {
+                docker {
+                    image 'repository.xiaobao100.com/docker/library/dotnet-sonar:4.6.2'
+                }
+            }
+            steps{
+              withSonarQubeEnv('sonarqube') {
+                  sh "rm -rf .sonarqube"
+                  sh "dotnet /sonar-scanner/SonarScanner.MSBuild.dll begin /k:$APP_NAME /d:sonar.cs.opencover.reportsPaths='**/coverage.opencover.xml'"
+                  sh "dotnet build -c Release"
+                  sh "rm -drf testResults"
+                  sh (returnStatus: true, script: "find **/* -name \'*.csproj\' -print0 | xargs -L1 -0 -P 8 dotnet test --no-build -c Release --logger trx --results-directory testResults /p:CollectCoverage=true /p:CoverletOutputFormat=opencover")
+                    step([$class: 'XUnitPublisher', testTimeMargin: '3000', thresholdMode: 1, thresholds: [[$class: 'FailedThreshold', unstableThreshold: '0']
+                            , [$class: 'SkippedThreshold']], tools: [[$class: 'MSTestJunitHudsonTestType', deleteOutputFiles: true, failIfNotNew: false
+                            , pattern: 'testResults/**/*.trx', skipNoTestFiles: true, stopProcessingIfError: true]]])
+                  sh "dotnet /sonar-scanner/SonarScanner.MSBuild.dll end"
+                }
+            }
+        }
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
         stage('Build') {
             steps {
                 sh 'docker build -t $DOCKER_REPO$APP_NAME:$IMAGE_TAG .'
