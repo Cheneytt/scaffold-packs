@@ -37,12 +37,12 @@ pipeline {
         }
         stage("Quality Gate") {
             steps {
-                timeout(time: 1, unit: 'MINUTES') {
+                timeout(time: 1, unit: 'HOURS') {
                     waitForQualityGate abortPipeline: true
                 }
             }
         }
-        stage('Build') {
+        stage('Build & Push Image') {
             agent {
                 docker {
                     image 'maven:3.6.0-jdk-8-slim'
@@ -54,12 +54,8 @@ pipeline {
 		sh 'mvn versions:commit'
                 sh 'mvn -B -DskipTests clean package'
                 sh 'docker build --build-arg JAR_FILE=target/$APP_NAME-$IMAGE_TAG.jar -t $DOCKER_REPO$APP_NAME:$IMAGE_TAG .'
-            }
-        }
-        stage('Push Image') {
-            steps {
                 sh 'docker push $DOCKER_REPO$APP_NAME:$IMAGE_TAG'
-            }
+	    }
         }
         stage('Deploy') {
             steps {
