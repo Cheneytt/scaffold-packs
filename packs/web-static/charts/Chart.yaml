@@ -1,0 +1,4 @@
+name: REPLACE_ME_APP_NAME
+description: A Helm chart for Kubernetes
+apiVersion: v1
+version: 1.0.0
