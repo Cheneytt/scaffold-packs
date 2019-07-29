@@ -22,7 +22,7 @@ pipeline {
 	stage('Test'){
             agent {
                 docker {
-                    image 'repository.xiaobao100.com/docker/library/dotnet-sonar:4.6.2'
+                    image 'repository.xiaobao100.com/docker/library/dotnet-sonar-cn:4.6.2'
                 }
             }
             steps{
