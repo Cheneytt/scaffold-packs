@@ -1,0 +1,31 @@
+# yaml 格式，缩进必须是两个空格，不能是tab  大小写敏感  UTF-8 编码
+# 所有分支都会继承，可以覆盖
+BASE:
+  env:
+    K8S_NAMESPACE: default
+    USE_K8S_CONTEXT: $DEFAULT_K8S_CONTEXT
+    K8S_HEALTH_CHECK_WAIT_TIME_Seconds: 15
+    IMAGE_TAG_PREFIX: 1.0.0-
+    REPLICA_COUNT: 1
+  helmInject:
+    image.repository: $DOCKER_REPO
+    image.name: $APP_NAME
+    image.tag: $IMAGE_TAG
+    namespace: $K8S_NAMESPACE
+    replicaCount: $REPLICA_COUNT
+# 以下为通配分支 或 特殊指定分支
+dev-*:
+  env:
+    K8S_NAMESPACE: dev-01
+    IMAGE_TAG_SUFFIX: -dev
+test-*:
+  env:
+    K8S_NAMESPACE: test-01
+    IMAGE_TAG_SUFFIX: -test
+preview-*:
+  env:
+    K8S_NAMESPACE: preview-01
+    IMAGE_TAG_SUFFIX: -RC
+release-*:
+  env:
+    K8S_NAMESPACE: release-01

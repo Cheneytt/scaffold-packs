@@ -4,7 +4,6 @@ metadata:
   name: {{ template "name" . }}
   namespace: {{ default "default" .Values.namespace }}
   labels:
-    draft: {{ default "draft-app" .Values.draft }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
   replicas: {{ .Values.replicaCount }}
@@ -22,8 +21,9 @@ spec:
         image: "{{ .Values.image.repository }}{{ .Values.image.name }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
-{{- with .Values.extraEnv }}
-{{ tpl . $ | indent 8 }}
+{{range $key, $value := .Values.extraEnv}}
+        - name: {{$key}}
+          value: {{$value}}
 {{- end }}
         volumeMounts:
 {{- with .Values.extraVolumeMounts }}
