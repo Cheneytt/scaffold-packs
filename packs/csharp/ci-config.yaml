@@ -1,31 +1,43 @@
 # yaml 格式，缩进必须是两个空格，不能是tab  大小写敏感  UTF-8 编码
 # 所有分支都会继承，可以覆盖
 BASE:
+  # 必须有 ci可以使用的环境变量
   env:
+    # 必须有 部署的k8s的命名空间
     K8S_NAMESPACE: default
+    # 必须有 使用的是那个k8s集群
     USE_K8S_CONTEXT: $DEFAULT_K8S_CONTEXT
-    K8S_HEALTH_CHECK_WAIT_TIME_Seconds: 15
+    # 必须有 k8s部署是否成功的检查的时候每次等待的时间，单位是秒，建议5-30之间，默认是15秒
+    K8S_HEALTH_CHECK_WAIT_TIME_SECONDS: 15
+    # 必须有 镜像tag的前缀 建议：使用版本号加- 作为前缀
     IMAGE_TAG_PREFIX: 1.0.0-
+    # 必须有 pod部署的数量
     REPLICA_COUNT: 1
+  # 必须有 helm 部署所要注入的变量值
   helmInject:
+    # 必须有 镜像的存储库
     image.repository: $DOCKER_REPO
+    # 必须有 镜像的名称 且值不可以改
     image.name: $APP_NAME
+    # 必须有 镜像的tag 且值不建议改
     image.tag: $IMAGE_TAG
+    # 必须有 部署的k8s的命名空间
     namespace: $K8S_NAMESPACE
+    # 必须有 pod部署的数量
     replicaCount: $REPLICA_COUNT
 # 以下为通配分支 或 特殊指定分支
 dev-*:
   env:
-    K8S_NAMESPACE: dev-01
+    K8S_NAMESPACE: dev
     IMAGE_TAG_SUFFIX: -dev
 test-*:
   env:
-    K8S_NAMESPACE: test-01
+    K8S_NAMESPACE: test
     IMAGE_TAG_SUFFIX: -test
 preview-*:
   env:
-    K8S_NAMESPACE: preview-01
+    K8S_NAMESPACE: preview
     IMAGE_TAG_SUFFIX: -RC
 release-*:
   env:
-    K8S_NAMESPACE: release-01
+    K8S_NAMESPACE: release
