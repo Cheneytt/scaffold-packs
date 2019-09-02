@@ -26,18 +26,27 @@ BASE:
     # 必须有 pod部署的数量
     replicaCount: $REPLICA_COUNT
 # 以下为通配分支 或 特殊指定分支
+# 匹配以dev-开头的所有分支
 dev-*:
   env:
     K8S_NAMESPACE: dev
+    # 可选 镜像tag的后缀
     IMAGE_TAG_SUFFIX: -dev
+# 匹配以test-开头的所有分支
 test-*:
   env:
     K8S_NAMESPACE: test
     IMAGE_TAG_SUFFIX: -test
+# 匹配以preview-开头的所有分支
 preview-*:
   env:
     K8S_NAMESPACE: preview
     IMAGE_TAG_SUFFIX: -RC
+# 匹配以release-开头的所有分支
 release-*:
   env:
     K8S_NAMESPACE: release
+# 匹配指定的master分支
+master:
+  env:
+    K8S_NAMESPACE: master
