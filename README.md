@@ -1,4 +1,3 @@
-# NOTE these build packs are migrating...
 custom scaffold packages
-- `java`的包是基于`maven`的，并提供`k8s`构建的`chart`
-- `csharp`的包是基于`.net core`的，并提供`k8s`构建的`chart`, 但不提供`Dockerfile`, `Dockerfile`请使用`VS`自动生成
+- `java`鐨勫寘鏄熀浜巂maven`鐨勶紝骞舵彁渚沗k8s`鏋勫缓鐨刞chart`
+- `csharp`鐨勫寘鏄熀浜巂.net core`鐨勶紝骞舵彁渚沗k8s`鏋勫缓鐨刞chart`, 浣嗕笉鎻愪緵`Dockerfile`, `Dockerfile`璇蜂娇鐢╜VS`鑷姩鐢熸垚
