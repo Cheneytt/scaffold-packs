@@ -15,10 +15,6 @@ BASE:
     REPLICA_COUNT: 1
   # 必须有 helm 部署所要注入的变量值
   helmInject:
-    # 必须有 镜像的存储库
-    image.repository: $DOCKER_REPO
-    # 必须有 镜像的名称 且值不可以改
-    image.name: $APP_NAME
     # 必须有 镜像的tag 且值不建议改
     image.tag: $IMAGE_TAG
     # 必须有 部署的k8s的命名空间
