@@ -42,7 +42,9 @@ preview-*:
 release-*:
   env:
     K8S_NAMESPACE: release
+    REPLICA_COUNT: 3
 # 匹配指定的master分支
 master:
   env:
     K8S_NAMESPACE: master
+    REPLICA_COUNT: 3
